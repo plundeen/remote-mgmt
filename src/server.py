@@ -11,15 +11,15 @@ import os
 from subprocess import Popen, PIPE, STDOUT
 
 # dummy package names for now
-package_list = ["canary", "demo", "foo", "bar"]
-version_list = ["1.0.0.0", "1.1.0.0", "1.2.3.4", "2.0.1.0"]
+PACKAGE_LIST = ["canary", "demo", "foo", "bar"]
+VERSION_LIST = ["1.0.0.0", "1.1.0.0", "1.2.3.4", "2.0.1.0"]
 
 
 class FeedRegistrationForm(FlaskForm):
     """Flask WTForm object for selecting feed to register"""
 
     feed = SelectField(
-        label="Package", choices=package_list, validators=[DataRequired()]
+        label="Package", validators=[DataRequired()]
     )
     submit = SubmitField(label="Install")
 
@@ -28,10 +28,10 @@ class InstallForm(FlaskForm):
     """Flask WTForm object for selecting package to install"""
 
     package = SelectField(
-        label="Package", choices=package_list, validators=[DataRequired()]
+        label="Package", validators=[DataRequired()]
     )
     version = SelectField(
-        label="Version", choices=version_list, validators=[DataRequired()]
+        label="Version", validators=[DataRequired()]
     )
     submit = SubmitField(label="Install")
 
@@ -75,6 +75,7 @@ def home():
 @app.route("/register_feed", methods=["GET", "POST"])
 def register_feed():
     feed_form = FeedRegistrationForm()
+    feed_form.feed.choices = PACKAGE_LIST
     if feed_form.validate_on_submit():
         feed_obj = {"package": feed_form.feed.data}
         print(feed_obj)
@@ -84,6 +85,8 @@ def register_feed():
 @app.route("/install_package", methods=["GET", "POST"])
 def install_package():
     install_form = InstallForm()
+    install_form.package.choices = PACKAGE_LIST
+    install_form.version.choices = VERSION_LIST
     if install_form.validate_on_submit():
         package_obj = {
             "package": install_form.package.data,
