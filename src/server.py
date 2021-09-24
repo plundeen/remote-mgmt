@@ -130,13 +130,14 @@ def log_file(file_path):
     if os.path.isfile(file_path):
         with open(file_path) as f:
             content = f.read()
-            print(file_path)
-            print(content)
     else:
         with os.scandir(os.path.abspath(file_path)) as listOfEntries:
             for entry in listOfEntries:
                 relpath = os.path.relpath(entry.path, 'static')
-                links.append({"name":relpath, "href":relpath})
+                linkname = relpath.replace("\\", "/")
+                if os.path.isdir(entry.path):
+                    linkname += "/"                 
+                links.append({"name":linkname, "href":relpath})
     return render_template("log_file.html", file_contents=content, links=links)
 
 
