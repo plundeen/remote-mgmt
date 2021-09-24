@@ -1,5 +1,5 @@
-from flask import Flask, Response, render_template, stream_with_context
 from flask_bootstrap import Bootstrap
+from flask import Flask, Response, render_template, stream_with_context
 from flask_nav import Nav
 from flask_nav.elements import Navbar, View
 from flask_wtf import FlaskForm
@@ -55,6 +55,7 @@ def mynavbar():
 
 # Set up the flask app
 app = Flask(__name__)
+app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 nav.init_app(app)
 Bootstrap(app)
 
