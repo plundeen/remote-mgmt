@@ -126,7 +126,7 @@ def log_file(file_path):
     """Demo of hosting static files and rendering contents in browser"""
     content = ""
     links = [{"name": "<root>", "href": "/logs"}]
-    file_path = f"static/{file_path}"
+    file_path = f"logs/{file_path}"
     
     if os.path.isfile(file_path):
         with open(file_path) as f:
@@ -134,7 +134,7 @@ def log_file(file_path):
     else:
         with os.scandir(os.path.abspath(file_path)) as listOfEntries:
             for entry in listOfEntries:
-                relpath = os.path.relpath(entry.path, 'static')
+                relpath = os.path.relpath(entry.path, 'logs')
                 linkname = relpath.replace("\\", "/")
                 if os.path.isdir(entry.path):
                     linkname += "/"                 
