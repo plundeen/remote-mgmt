@@ -55,6 +55,10 @@ def mynavbar():
 
 # Set up the flask app
 app = Flask(__name__)
+
+# Enable this to serve local bootstrap resources (i.e. if behind firewall)
+# app.config['BOOTSTRAP_SERVE_LOCAL'] = True
+
 nav.init_app(app)
 Bootstrap(app)
 
