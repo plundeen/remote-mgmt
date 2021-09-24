@@ -5,6 +5,7 @@ from flask_nav.elements import Navbar, View
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Email
+from time import sleep
 
 # dummy package names for now
 package_list = ["canary", "demo", "foo", "bar"]
@@ -42,7 +43,8 @@ def mynavbar():
         View("Home", "home"),
         View("Register Feed", "register_feed"),
         View("Install Package", "install_package"),
-        View("Job History", "job_history")
+        View("Job History", "job_history"),
+        View("Stream test", "stream_test")
     )
 
 
@@ -84,6 +86,15 @@ def install_package():
 @app.route("/job_history", methods=["GET"])
 def job_history():
     return render_template("job_history.html")
+
+@app.route("/stream_test", methods=["GET"])
+def stream_test():
+    # https://flask.palletsprojects.com/en/2.0.x/patterns/streaming/
+    def generate():
+        for i in range(10):
+            yield f"Line {i}<br>"
+            sleep(0.5)
+    return app.response_class(generate())
 
 
 if __name__ == "__main__":
