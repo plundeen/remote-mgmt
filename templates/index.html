@@ -1,0 +1,16 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+Test Webapp
+{% endblock %}
+
+{% block content %}
+
+<div class="jumbotron">
+    <div class="container">
+    <h1>Welcome</h1>
+    <p>This is just a dumb test</p>
+    <a class="btn btn-primary btn-lg" href=" {{ url_for('install_package') }} ">Login</a>
+    </div>
+</div>
+{% endblock %}
