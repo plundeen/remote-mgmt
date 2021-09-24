@@ -42,6 +42,7 @@ def mynavbar():
         View("Home", "home"),
         View("Register Feed", "register_feed"),
         View("Install Package", "install_package"),
+        View("Job History", "job_history")
     )
 
 
@@ -78,6 +79,11 @@ def install_package():
         }
         print(package_obj)
     return render_template("install_package.html", form=install_form)
+
+
+@app.route("/job_history", methods=["GET"])
+def job_history():
+    return render_template("job_history.html")
 
 
 if __name__ == "__main__":
