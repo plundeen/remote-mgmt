@@ -68,6 +68,3 @@ def install(package: str, version: str) -> None:
     # Probably should be a websocket, right? Can we pass the socket in?
     # Or should this function just handle the full websocket stuff?
     pass
-
-
-# get_package_versions("canary")

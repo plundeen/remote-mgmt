@@ -1,4 +1,4 @@
-from flask import Flask, Response, render_template, stream_with_context
+from flask import Flask, Response, render_template, request, stream_with_context
 from flask_bootstrap import Bootstrap
 from flask_nav import Nav
 from flask_nav.elements import Navbar, View
@@ -150,6 +150,22 @@ def log_file(file_path):
                 links.append({"name": linkname, "href": relpath})
     return render_template("log_file.html", file_contents=content, links=links)
 
+
+def shutdown_server():
+    """Function to shut down the simple flask server"""
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+
+@app.route("/shutdown")
+def shutdown():
+    # Intent here is to support killing this app in preparation for updating it.
+    # We might be able to call a scheduled task to update and restart in 1 min.
+    # Or, perhaps we could have this run as a service, and it could auto recover...
+    # TODO: consider making a page with a button and doing this as a POST operation
+    shutdown_server()
+    return 'Server shutting down...'
 
 if __name__ == "__main__":
     app.run(debug=True)
