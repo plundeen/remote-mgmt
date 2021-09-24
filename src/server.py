@@ -7,6 +7,7 @@ from wtforms import SelectField, SubmitField
 from wtforms.validators import DataRequired
 from time import sleep
 from datetime import datetime
+import os
 
 # dummy package names for now
 package_list = ["canary", "demo", "foo", "bar"]
@@ -48,6 +49,7 @@ def mynavbar():
         View("Install Package", "install_package"),
         View("Job History", "job_history"),
         View("Stream test", "stream_test"),
+        View("Log Files", "log_file", file_path=""),
     )
 
 
@@ -110,12 +112,34 @@ def generate():
 
 @app.route("/stream_test", methods=["GET"])
 def stream_test():
+    """Demo of streaming text content into a templated page"""
     # https://flask.palletsprojects.com/en/2.0.x/patterns/streaming/
     # https://gist.github.com/huiliu/46be335427605960fa84
     lines = generate()
     return Response(
         stream_with_context(stream_template("stream_test.html", lines=lines))
     )
+
+@app.route('/logs/', defaults={'file_path': ''})
+@app.route("/logs/<path:file_path>", methods=["GET"])
+def log_file(file_path):
+    """Demo of hosting static files and rendering contents in browser"""
+    content = ""
+    links = [{"name": "<root>", "href": "/logs"}]
+    file_path = f"logs/{file_path}"
+    
+    if os.path.isfile(file_path):
+        with open(file_path) as f:
+            content = f.read()
+    else:
+        with os.scandir(os.path.abspath(file_path)) as listOfEntries:
+            for entry in listOfEntries:
+                relpath = os.path.relpath(entry.path, 'logs')
+                linkname = relpath.replace("\\", "/")
+                if os.path.isdir(entry.path):
+                    linkname += "/"                 
+                links.append({"name":linkname, "href":relpath})
+    return render_template("log_file.html", file_contents=content, links=links)
 
 
 if __name__ == "__main__":
