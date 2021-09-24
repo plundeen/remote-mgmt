@@ -110,12 +110,19 @@ def generate():
 
 @app.route("/stream_test", methods=["GET"])
 def stream_test():
+    """Demo of streaming text content into a templated page"""
     # https://flask.palletsprojects.com/en/2.0.x/patterns/streaming/
     # https://gist.github.com/huiliu/46be335427605960fa84
     lines = generate()
     return Response(
         stream_with_context(stream_template("stream_test.html", lines=lines))
     )
+
+@app.route("/logs/<path:file_path>", methods=["GET"])
+def log_file(file_path):
+    with open(f"static/{file_path}") as f:
+        content = f.read()
+    return Response(content, mimetype="text/plain")
 
 
 if __name__ == "__main__":
