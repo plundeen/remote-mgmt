@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Log File
+{% endblock %}
+
+{% block content %}
+    <div class="container" style="font-family: monospace;">
+        {% for link in links %}
+        <a href="{{ link.href }}">{{ link.name }}</a><br>
+        {% endfor %}
+        {{ file_contents }}
+    </div>
+{% endblock %}
