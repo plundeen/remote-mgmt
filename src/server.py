@@ -1,10 +1,10 @@
-from flask import Flask, render_template, Response, stream_with_context
+from flask import Flask, Response, render_template, stream_with_context
 from flask_bootstrap import Bootstrap
 from flask_nav import Nav
 from flask_nav.elements import Navbar, View
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SelectField, SubmitField
-from wtforms.validators import DataRequired, Email
+from wtforms import SelectField, SubmitField
+from wtforms.validators import DataRequired
 from time import sleep
 from datetime import datetime
 
@@ -94,6 +94,7 @@ def job_history():
 def stream_template(template_name, **context):
     """Function to stream data to a template"""
     app.update_template_context(context)
+    # pylint: disable=E1101
     t = app.jinja_env.get_template(template_name)
     rv = t.stream(context)
     rv.disable_buffering()
@@ -112,7 +113,9 @@ def stream_test():
     # https://flask.palletsprojects.com/en/2.0.x/patterns/streaming/
     # https://gist.github.com/huiliu/46be335427605960fa84
     lines = generate()
-    return Response(stream_with_context(stream_template("stream_test.html", lines=lines)))
+    return Response(
+        stream_with_context(stream_template("stream_test.html", lines=lines))
+    )
 
 
 if __name__ == "__main__":
