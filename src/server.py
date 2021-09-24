@@ -8,6 +8,7 @@ from wtforms.validators import DataRequired
 from time import sleep
 from datetime import datetime
 import os
+from subprocess import Popen, PIPE, STDOUT
 
 # dummy package names for now
 package_list = ["canary", "demo", "foo", "bar"]
@@ -124,25 +125,26 @@ def stream_test():
         stream_with_context(stream_template("stream_test.html", lines=lines))
     )
 
-@app.route('/logs/', defaults={'file_path': ''})
+
+@app.route("/logs/", defaults={"file_path": ""})
 @app.route("/logs/<path:file_path>", methods=["GET"])
 def log_file(file_path):
     """Demo of hosting static files and rendering contents in browser"""
     content = ""
     links = [{"name": "<root>", "href": "/logs"}]
     file_path = f"logs/{file_path}"
-    
+
     if os.path.isfile(file_path):
         with open(file_path) as f:
             content = f.read()
     else:
         with os.scandir(os.path.abspath(file_path)) as listOfEntries:
             for entry in listOfEntries:
-                relpath = os.path.relpath(entry.path, 'logs')
+                relpath = os.path.relpath(entry.path, "logs")
                 linkname = relpath.replace("\\", "/")
                 if os.path.isdir(entry.path):
-                    linkname += "/"                 
-                links.append({"name":linkname, "href":relpath})
+                    linkname += "/"
+                links.append({"name": linkname, "href": relpath})
     return render_template("log_file.html", file_contents=content, links=links)
 
 
