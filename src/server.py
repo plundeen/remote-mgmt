@@ -49,6 +49,7 @@ def mynavbar():
         View("Install Package", "install_package"),
         View("Job History", "job_history"),
         View("Stream test", "stream_test"),
+        View("Log Files", "log_file", file_path=""),
     )
 
 
