@@ -9,6 +9,25 @@ from time import sleep
 from datetime import datetime
 import os
 from subprocess import Popen, PIPE, STDOUT
+import socket
+import threading
+
+
+#tcp server
+TCP_IP = '127.0.0.1'
+TCP_PORT = 7005
+BUFFER_SIZE  = 20
+
+def tcp_server():
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    s.bind((TCP_IP, TCP_PORT))
+    s.listen(1)
+
+    print(f'TCP Server listening on port {TCP_PORT}')
+    _, addr = s.accept()
+
+    print (f'TCP client connected from {addr}')
 
 # dummy package names for now
 PACKAGE_LIST = ["canary", "demo", "foo", "bar"]
@@ -168,4 +187,7 @@ def shutdown():
     return 'Server shutting down...'
 
 if __name__ == "__main__":
+    t = threading.Thread(target=tcp_server)
+    t.daemon = True
+    t.start()
     app.run(debug=True)
