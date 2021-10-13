@@ -1,14 +1,20 @@
+#!/usr/bin/env python3
+"""Demo webserver leveraging Flask-Bootstrap"""
+
+from time import sleep
+from datetime import datetime
+import os
+import sys
+
 from flask import Flask, Response, render_template, request, stream_with_context
 from flask_bootstrap import Bootstrap
+import flask_bootstrap.nav
 from flask_nav import Nav
 from flask_nav.elements import Navbar, View
 from flask_wtf import FlaskForm
 from wtforms import SelectField, SubmitField
 from wtforms.validators import DataRequired
-from time import sleep
-from datetime import datetime
-import os
-from subprocess import Popen, PIPE, STDOUT
+
 
 # dummy package names for now
 PACKAGE_LIST = ["canary", "demo", "foo", "bar"]
@@ -55,7 +61,14 @@ def mynavbar():
 
 
 # Set up the flask app
-app = Flask(__name__)
+if getattr(sys, 'frozen', False):
+    print('getattr returned frozen')
+    template_folder = os.path.join(sys._MEIPASS, 'templates')
+    static_folder = os.path.join(sys._MEIPASS, 'static')
+    app = Flask(__name__, template_folder=template_folder, static_folder=static_folder)
+else:
+    print('default getattr case')
+    app = Flask(__name__)
 
 # Enable this to serve local bootstrap resources (i.e. if behind firewall)
 # app.config['BOOTSTRAP_SERVE_LOCAL'] = True
@@ -69,11 +82,13 @@ app.secret_key = "waffleswaffleswaffleswaffles"
 
 @app.route("/")
 def home():
+    """Default index"""
     return render_template("index.html")
 
 
 @app.route("/register_feed", methods=["GET", "POST"])
 def register_feed():
+    """Route to demonstrate registering a new feed"""
     feed_form = FeedRegistrationForm()
     feed_form.feed.choices = PACKAGE_LIST
     if feed_form.validate_on_submit():
@@ -84,6 +99,7 @@ def register_feed():
 
 @app.route("/install_package", methods=["GET", "POST"])
 def install_package():
+    """Route to demonstrate installing a package"""
     install_form = InstallForm()
     install_form.package.choices = PACKAGE_LIST
     install_form.version.choices = VERSION_LIST
@@ -98,6 +114,7 @@ def install_package():
 
 @app.route("/job_history", methods=["GET"])
 def job_history():
+    """Route for opening the job_history template, to demo showing previous jobs' logs"""
     return render_template("job_history.html")
 
 
@@ -135,14 +152,14 @@ def log_file(file_path):
     """Demo of hosting static files and rendering contents in browser"""
     content = ""
     links = [{"name": "<root>", "href": "/logs"}]
-    file_path = f"logs/{file_path}"
+    file_path = f"static/logs/{file_path}"
 
     if os.path.isfile(file_path):
         with open(file_path) as f:
             content = f.read()
     else:
-        with os.scandir(os.path.abspath(file_path)) as listOfEntries:
-            for entry in listOfEntries:
+        with os.scandir(os.path.abspath(file_path)) as list_of_entries:
+            for entry in list_of_entries:
                 relpath = os.path.relpath(entry.path, "logs")
                 linkname = relpath.replace("\\", "/")
                 if os.path.isdir(entry.path):
@@ -160,6 +177,7 @@ def shutdown_server():
 
 @app.route("/shutdown")
 def shutdown():
+    """Shuts down the server"""
     # Intent here is to support killing this app in preparation for updating it.
     # We might be able to call a scheduled task to update and restart in 1 min.
     # Or, perhaps we could have this run as a service, and it could auto recover...
